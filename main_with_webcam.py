@@ -4,6 +4,7 @@ import mediapipe as mp
 import numpy as np
 from Score_Evaluation import Score_Evaluation
 from HeadOrientation import HeadOrientation
+from YawnDetection import YawnDetection
 def process_face_mediapipe(frame):
 
     results = faceMesh.process(frame)
@@ -30,6 +31,8 @@ eye_detector = EyeDetector(showProcessing= False)
 score_evaluation = Score_Evaluation(11, ear_tresh=0.18, ear_time_tresh=3.0, gaze_tresh=0.2,
                        gaze_time_tresh=2, pitch_tresh=35, yaw_tresh=28, pose_time_tresh=2.5, verbose=False)
 
+yawn_detection = YawnDetection()
+
 if camera_matrix is not None and dist_coeffs is not None:
     headOrientation = HeadOrientation(camera_matrix= camera_matrix,dist_coeffs=dist_coeffs,show_axis=True)
 else:
@@ -45,6 +48,7 @@ faceMesh = mpFaceMesh.FaceMesh(max_num_faces = 1)
 avg_gaze_score = None
 
 while(cap.isOpened()):
+    yawning = False
     ret, img = cap.read()
     img = cv2.flip(img,1)
     if ret:
@@ -107,6 +111,11 @@ while(cap.isOpened()):
 
         left_gaze = eye_detector.gaze_another_method(eye_detector.region_of_interest_left)
         right_gaze = eye_detector.gaze_another_method(eye_detector.region_of_interest_right)
+
+        yawn_detection.get_imp_coordinates(multi_face_landmarks,img, width, height)
+        lips_distance = yawn_detection.get_distance()
+        if lips_distance > 25:
+            yawning = True
         
         gaze_score = (left_gaze + right_gaze) / 2
 
@@ -122,6 +131,8 @@ while(cap.isOpened()):
         #     cv2.putText(img, "Gaze Score:" + str(round(avg_gaze_score, 3)), (10, 80),
         #                         cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 255), 1, cv2.LINE_AA)
 
+        if yawning:
+            cv2.putText(img, "Yawning", (80,300), cv2.FONT_HERSHEY_PLAIN, 1, (0,0,255),1,cv2.LINE_AA)
         if tired:
             cv2.putText(img, "TIRED!", (10, 280),
                         cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 255), 1, cv2.LINE_AA)
