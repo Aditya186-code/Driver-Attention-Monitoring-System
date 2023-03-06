@@ -5,6 +5,20 @@ import numpy as np
 from Score_Evaluation import Score_Evaluation
 from HeadOrientation import HeadOrientation
 from YawnDetection import YawnDetection
+import pygame
+from pygame import mixer
+
+mixer.init()
+
+
+yawning_music = mixer.Sound('Voices/yawning.mp3')
+looking_left = mixer.Sound('Voices/Looking-Left.mp3')
+looking_right = mixer.Sound('Voices/Looking-Right.mp3')
+looking_up = mixer.Sound('Voices/Looking-Up.mp3')
+looking_down = mixer.Sound('Voices/Looking-Down.mp3')
+asleep_music = mixer.Sound('Voices/Asleep.mp3')
+
+
 def process_face_mediapipe(frame):
 
     results = faceMesh.process(frame)
@@ -34,9 +48,9 @@ score_evaluation = Score_Evaluation(11, ear_tresh=0.18, ear_time_tresh=3.0, gaze
 yawn_detection = YawnDetection()
 
 if camera_matrix is not None and dist_coeffs is not None:
-    headOrientation = HeadOrientation(camera_matrix= camera_matrix,dist_coeffs=dist_coeffs,show_axis=True)
+    headOrientation = HeadOrientation(looking_left,looking_right,looking_up,looking_down,camera_matrix= camera_matrix,dist_coeffs=dist_coeffs,show_axis=True)
 else:
-    headOrientation = HeadOrientation(show_axis= True)
+    headOrientation = HeadOrientation(looking_left,looking_right,looking_up,looking_down,show_axis= True)
     
 cap = cv2.VideoCapture(0)
 
@@ -53,6 +67,7 @@ frame_counter = 0
 mpFaceMesh = mp.solutions.face_mesh
 faceMesh = mpFaceMesh.FaceMesh(max_num_faces = 1)
 avg_gaze_score = None
+
 
 while(cap.isOpened()):
     yawning = False
@@ -124,6 +139,8 @@ while(cap.isOpened()):
         lips_distance = yawn_detection.get_distance()
         if lips_distance and  lips_distance > 25:
             yawning = True
+            if pygame.mixer.get_busy() == 0:
+                yawning_music.play()
         
         # gaze_score = (left_gaze + right_gaze) / 2
 
@@ -165,6 +182,8 @@ while(cap.isOpened()):
         if asleep:
             cv2.putText(img, "ASLEEP!", (10, 400),
                         cv2.FONT_HERSHEY_PLAIN, 5, (0, 0, 255), 2, cv2.LINE_AA)
+            if pygame.mixer.get_busy() == 0:
+                asleep_music.play()
         if looking_away:
             cv2.putText(img, "Pupil Not In Center!", (10, 350),
                         cv2.FONT_HERSHEY_PLAIN, 2, (0, 0, 255), 2, cv2.LINE_AA)

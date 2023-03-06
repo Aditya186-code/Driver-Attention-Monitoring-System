@@ -1,9 +1,12 @@
 import cv2
 import numpy as np
+import pygame
+from pygame import mixer
+
 # from Utils import rotationMatrixToEulerAngles, draw_pose_info
 
 class HeadOrientation:
-    def __init__(self, camera_matrix = None, dist_coeffs = None, show_axis : bool = False):
+    def __init__(self,looking_left, looking_right, looking_up,looking_down,camera_matrix = None, dist_coeffs = None, show_axis : bool = False):
         """
         This class contains methods to calculated the angles(roll, pitch, yaw) of the head. It optionally also uses the camera parameters
         
@@ -13,9 +16,13 @@ class HeadOrientation:
 
         
         """
+        self.looking_up = looking_up
+        self.looking_down = looking_down
+        self.looking_right = looking_right
+        self.looking_left = looking_left
         self.show_axis = show_axis
         self.camera_matrix = camera_matrix
-
+        
         self.dist_coeffs = dist_coeffs
     
     
@@ -121,13 +128,13 @@ class HeadOrientation:
 
                 # See where the user's head tilting
                 if y < -10:
-                    text = "Looking Left"
+                    text = "Looking-Left"
                 elif y > 10:
-                    text = "Looking Right"
+                    text = "Looking-Right"
                 elif x < -10:
-                    text = "Looking Down"
+                    text = "Looking-Down"
                 elif x > 10:
-                    text = "Looking Up"
+                    text = "Looking-Up"
                 else:
                     text = "Forward"
 
@@ -142,6 +149,18 @@ class HeadOrientation:
                 # Add the text on the image
                 # cv2.putText(frame, text, (20, 1500), cv2.FONT_HERSHEY_SIMPLEX, 8, (0, 0, 255), 5)
                 cv2.putText(frame, text, (20,100), cv2.FONT_HERSHEY_SIMPLEX, 2, (0,0,255), 2)
+                if text == "Looking-Up":
+                    if pygame.mixer.get_busy() == 0:
+                        self.looking_up.play()
+                elif text == "Looking-Down":
+                    if pygame.mixer.get_busy() == 0:
+                        self.looking_down.play()
+                elif text == "Looking-Right":
+                    if pygame.mixer.get_busy() == 0:
+                        self.looking_right.play()
+                elif text == "Looking-Left":
+                    if pygame.mixer.get_busy() == 0:
+                        self.looking_left.play()
 
                 return self.frame, x, y, z
         else:

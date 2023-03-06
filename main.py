@@ -4,6 +4,7 @@ import mediapipe as mp
 import numpy as np
 from Score_Evaluation import Score_Evaluation
 from HeadOrientation import HeadOrientation
+
 def process_face_mediapipe(frame):
 
     results = faceMesh.process(frame)
@@ -42,6 +43,10 @@ frame_counter = 0
 mpFaceMesh = mp.solutions.face_mesh
 faceMesh = mpFaceMesh.FaceMesh(max_num_faces = 1)
 avg_gaze_score = None
+
+
+
+
 
 while(cap.isOpened()):
     ret, img = cap.read()
