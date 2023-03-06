@@ -37,7 +37,14 @@ if camera_matrix is not None and dist_coeffs is not None:
     headOrientation = HeadOrientation(camera_matrix= camera_matrix,dist_coeffs=dist_coeffs,show_axis=True)
 else:
     headOrientation = HeadOrientation(show_axis= True)
+    
 cap = cv2.VideoCapture(0)
+
+
+ret, camera = cap.read()
+img_hieght, img_width = camera.shape[:2]
+fourcc = cv2.VideoWriter_fourcc(*'XVID')
+out = cv2.VideoWriter('output21.mp4', fourcc, 30.0, (img_width, img_hieght))
 
 window_width = 800
 
@@ -78,9 +85,9 @@ while(cap.isOpened()):
         gaze_eye_right, right_eye = eye_detector.Gaze_calculation(eye_detector.region_of_interest_right)
         # print(gaze_eye_right)
 
-        right_eye_pupil = (eye_detector.positionEstimator(eye_detector.region_of_interest_right))
+        # right_eye_pupil = (eye_detector.positionEstimator(eye_detector.region_of_interest_right))
 
-        left_eye_pupil = (eye_detector.positionEstimator(eye_detector.region_of_interest_left))
+        # left_eye_pupil = (eye_detector.positionEstimator(eye_detector.region_of_interest_left))
         if gaze_eye_left and gaze_eye_right:
 
             # computes the average gaze score for the 2 eyes
@@ -91,6 +98,7 @@ while(cap.isOpened()):
             avg_gaze_score = gaze_eye_right
 
         EAR = eye_detector.get_EAR()
+        # print(EAR)
 
         frame_det, roll, pitch, yaw = headOrientation.get_pose(
                     frame=img, landmarks=multi_face_landmarks, width = width, height = height)
@@ -109,15 +117,15 @@ while(cap.isOpened()):
 
         # print("The perclos score is ", perclos_score)
 
-        left_gaze = eye_detector.gaze_another_method(eye_detector.region_of_interest_left)
-        right_gaze = eye_detector.gaze_another_method(eye_detector.region_of_interest_right)
+        # left_gaze = eye_detector.gaze_another_method(eye_detector.region_of_interest_left)
+        # right_gaze = eye_detector.gaze_another_method(eye_detector.region_of_interest_right)
 
         yawn_detection.get_imp_coordinates(multi_face_landmarks,img, width, height)
         lips_distance = yawn_detection.get_distance()
-        if lips_distance > 25:
+        if lips_distance and  lips_distance > 25:
             yawning = True
         
-        gaze_score = (left_gaze + right_gaze) / 2
+        # gaze_score = (left_gaze + right_gaze) / 2
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
@@ -144,7 +152,6 @@ while(cap.isOpened()):
         asleep, looking_away, distracted, right, center, left = score_evaluation.score_evaluate(
             EAR, avg_gaze_score, roll, pitch, yaw)
 
-        
         if right:
             cv2.putText(img, "Right!", (10, 400),
                         cv2.FONT_HERSHEY_PLAIN, 5, (0, 0, 255), 2, cv2.LINE_AA)
@@ -164,6 +171,9 @@ while(cap.isOpened()):
         if distracted:
             cv2.putText(img, "DISTRACTED!", (10, 400),
                         cv2.FONT_HERSHEY_PLAIN, 5, (0, 0, 255), 2, cv2.LINE_AA)
+            
+
+        out.write(img)
             
         cv2.imshow("Resized_Window", img)
     else:

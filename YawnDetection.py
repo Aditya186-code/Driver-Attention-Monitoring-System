@@ -30,20 +30,23 @@ class YawnDetection:
                         self.bottom_coordinates.append((req_x, req_y))
 
     def get_distance(self):
-        self.upper_coordinates = []
-        self.bottom_coordinates = []
+        try:
+            self.upper_coordinates = []
+            self.bottom_coordinates = []
 
-        for value in self.bottom_lips_imp_coordinates.values():
-            self.bottom_coordinates.append(value)
+            for value in self.bottom_lips_imp_coordinates.values():
+                self.bottom_coordinates.append(value)
 
-        for value in self.upper_lips_imp_coordinates.values():
-            self.upper_coordinates.append(value)
-        bottom = np.mean(self.bottom_coordinates, axis = 0)
-        # print(bottom)
-        bottom_y = int(bottom[1])
-        up = np.mean(self.upper_coordinates, axis = 0)
-        up_y = int(up[1])
-        return abs(up_y - bottom_y)
+            for value in self.upper_lips_imp_coordinates.values():
+                self.upper_coordinates.append(value)
+            bottom = np.mean(self.bottom_coordinates, axis = 0)
+            # print(bottom)
+            bottom_y = int(bottom[1])
+            up = np.mean(self.upper_coordinates, axis = 0)
+            up_y = int(up[1])
+            return abs(up_y - bottom_y)
+        except:
+            None
 
     
 

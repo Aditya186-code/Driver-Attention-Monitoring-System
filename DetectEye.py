@@ -73,108 +73,122 @@ class EyeDetector:
 
         '''Displays and Notes down the region of interest of eye in order to track the pupil of eye'''
         # print(self.left_eye_imp_coordinates)
-        max_x_left = max(self.left_eye_imp_coordinates.items(), key = lambda x : x[1][0])
-        max_y_left = max(self.left_eye_imp_coordinates.items(), key = lambda x : x[1][1])
-        min_x_left = min(self.left_eye_imp_coordinates.items(), key = lambda x : x[1][0])
-        min_y_left = min(self.left_eye_imp_coordinates.items(), key = lambda x : x[1][1])
-        cv2.rectangle(frame,( min_x_left[1][0] - 2, min_y_left[1][1] - 2),(max_x_left[1][0] + 2, max_y_left[1][1] + 2),(0, 0, 0), 1 )
 
-        # print("Max x left ", max_x_left[1][0])
-        # print("Max y left", max_y_left[1][1])
-        # print("Min x left", min_x_left[1][0])
-        # print("Min y left", min_y_left[1][1])
-        # self.region_of_interest_left = [[min_x_left[1][0], min_y_left[1][1]],[max_x_left[1][0], max_y_left[1][1]]]
-        # print("The frame is ", frame.shape)
+        try:
+            max_x_left = max(self.left_eye_imp_coordinates.items(), key = lambda x : x[1][0])
+            max_y_left = max(self.left_eye_imp_coordinates.items(), key = lambda x : x[1][1])
+            min_x_left = min(self.left_eye_imp_coordinates.items(), key = lambda x : x[1][0])
+            min_y_left = min(self.left_eye_imp_coordinates.items(), key = lambda x : x[1][1])
+            cv2.rectangle(frame,( min_x_left[1][0] - 2, min_y_left[1][1] - 2),(max_x_left[1][0] + 2, max_y_left[1][1] + 2),(0, 0, 0), 1 )
 
-        # self.region_of_interest_left = grayscale[min_y_left[1][1]-2:max_y_left[1][1]+2, min_x_left[1][0]-2:max_x_left[1][0]+2]
-        
-        self.region_of_interest_left = grayscale[min_y_left[1][1]:max_y_left[1][1], min_x_left[1][0]:max_x_left[1][0]]
+            # print("Max x left ", max_x_left[1][0])
+            # print("Max y left", max_y_left[1][1])
+            # print("Min x left", min_x_left[1][0])
+            # print("Min y left", min_y_left[1][1])
+            # self.region_of_interest_left = [[min_x_left[1][0], min_y_left[1][1]],[max_x_left[1][0], max_y_left[1][1]]]
+            # print("The frame is ", frame.shape)
 
-        max_x_right = max(self.right_eye_imp_coordinates.items(), key = lambda x : x[1][0])
-        max_y_right = max(self.right_eye_imp_coordinates.items(), key = lambda x : x[1][1])
-        min_x_right = min(self.right_eye_imp_coordinates.items(), key = lambda x : x[1][0])
-        min_y_right = min(self.right_eye_imp_coordinates.items(), key = lambda x : x[1][1])
+            # self.region_of_interest_left = grayscale[min_y_left[1][1]-2:max_y_left[1][1]+2, min_x_left[1][0]-2:max_x_left[1][0]+2]
+            
+            self.region_of_interest_left = grayscale[min_y_left[1][1]:max_y_left[1][1], min_x_left[1][0]:max_x_left[1][0]]
 
-        cv2.rectangle(frame,( min_x_right[1][0] - 2, min_y_right[1][1] - 2),(max_x_right[1][0] + 2, max_y_right[1][1] + 2),(0, 0, 0), 1 )
+            max_x_right = max(self.right_eye_imp_coordinates.items(), key = lambda x : x[1][0])
+            max_y_right = max(self.right_eye_imp_coordinates.items(), key = lambda x : x[1][1])
+            min_x_right = min(self.right_eye_imp_coordinates.items(), key = lambda x : x[1][0])
+            min_y_right = min(self.right_eye_imp_coordinates.items(), key = lambda x : x[1][1])
 
-        # self.region_of_interest_right = [[min_x_right[1][0], min_y_right[1][1]],[max_x_left[1][0], max_y_right[1][1]]]
+            cv2.rectangle(frame,( min_x_right[1][0] - 2, min_y_right[1][1] - 2),(max_x_right[1][0] + 2, max_y_right[1][1] + 2),(0, 0, 0), 1 )
 
-        # self.region_of_interest_right = grayscale[min_y_right[1][1]-2:max_y_right[1][1]+2, min_x_right[1][0]-2:max_x_right[1][0]+2]
+            # self.region_of_interest_right = [[min_x_right[1][0], min_y_right[1][1]],[max_x_left[1][0], max_y_right[1][1]]]
 
-        self.region_of_interest_right = grayscale[min_y_right[1][1]:max_y_right[1][1], min_x_right[1][0]:max_x_right[1][0]]
+            # self.region_of_interest_right = grayscale[min_y_right[1][1]-2:max_y_right[1][1]+2, min_x_right[1][0]-2:max_x_right[1][0]+2]
 
-        # self.Gaze_calculation()
-        # self.combined_region_of_interest = 
-        # print("Region of interest left is ", self.region_of_interest_left)
+            self.region_of_interest_right = grayscale[min_y_right[1][1]:max_y_right[1][1], min_x_right[1][0]:max_x_right[1][0]]
+
+            # self.Gaze_calculation()
+            # self.combined_region_of_interest = 
+            # print("Region of interest left is ", self.region_of_interest_left)
+        except:
+            pass
 
     
     def Gaze_calculation(self, region_of_interest):
         # print("The region of interest is ", region_of_interest)
-        eye_center = np.array(
-                [(region_of_interest.shape[1] // 2), (region_of_interest.shape[0] // 2)])  # eye ROI
-        
-        # print("The eye center is ", eye_center)
-        gaze_score = None
-        circles = None
 
-            # a bilateral filter is applied for reducing noise and keeping eye details
-        # region_of_interest = cv2.bilateralFilter(region_of_interest, 4, 40, 40)
-        # print("The region of interest is ", len(region_of_interest))
-        circles = cv2.HoughCircles(region_of_interest, cv2.HOUGH_GRADIENT, 1, 10,
-                                    param1=90, param2=6, minRadius=1, maxRadius=100)
-        # # a Hough Transform is used to find the iris circle and his center (the pupil) on the grayscale region_of_interest image with the contours drawn in white
-        # print("Hough Transform detected circle" , circles)
-        if circles is not None and len(circles) > 0:
-            circles = np.uint16(np.around(circles))
-            circle = circles[0][0, :]
+        try:
+            eye_center = np.array(
+                    [(region_of_interest.shape[1] // 2), (region_of_interest.shape[0] // 2)])  # eye ROI
+            
+            # print("The eye center is ", eye_center)
+            gaze_score = None
+            circles = None
 
-            cv2.circle(
-                region_of_interest, (circle[0], circle[1]), circle[2], (0, 0, 0), 1)
-            cv2.circle(
-                region_of_interest, (circle[0], circle[1]), 1, (0, 255, 0), -1)
+                # a bilateral filter is applied for reducing noise and keeping eye details
+            # region_of_interest = cv2.bilateralFilter(region_of_interest, 4, 40, 40)
+            # print("The region of interest is ", len(region_of_interest))
+            circles = cv2.HoughCircles(region_of_interest, cv2.HOUGH_GRADIENT, 1, 10,
+                                        param1=90, param2=6, minRadius=1, maxRadius=100)
+            # # a Hough Transform is used to find the iris circle and his center (the pupil) on the grayscale region_of_interest image with the contours drawn in white
+            # print("Hough Transform detected circle" , circles)
+            if circles is not None and len(circles) > 0:
+                circles = np.uint16(np.around(circles))
+                circle = circles[0][0, :]
 
-            # pupil position is the first circle center found with the Hough Transform
-            pupil_position = np.array([int(circle[0]), int(circle[1])])
+                cv2.circle(
+                    region_of_interest, (circle[0], circle[1]), circle[2], (0, 0, 0), 1)
+                cv2.circle(
+                    region_of_interest, (circle[0], circle[1]), 1, (0, 255, 0), -1)
 
-            cv2.line(region_of_interest, (eye_center[0], eye_center[1]), (
-                pupil_position[0], pupil_position[1]), (255, 255, 255), 1)
+                # pupil position is the first circle center found with the Hough Transform
+                pupil_position = np.array([int(circle[0]), int(circle[1])])
 
-            gaze_score = LA.norm(
-                pupil_position - eye_center) / eye_center[0]
-            # computes the L2 distance between the eye_center and the pupil position
+                cv2.line(region_of_interest, (eye_center[0], eye_center[1]), (
+                    pupil_position[0], pupil_position[1]), (255, 255, 255), 1)
 
-        cv2.circle(region_of_interest, (eye_center[0],
-                                eye_center[1]), 1, (0, 0, 0), -1)
+                gaze_score = LA.norm(
+                    pupil_position - eye_center) / eye_center[0]
+                # computes the L2 distance between the eye_center and the pupil position
 
-        if gaze_score is not None:
-            return gaze_score, region_of_interest
-        else:
+            cv2.circle(region_of_interest, (eye_center[0],
+                                    eye_center[1]), 1, (0, 0, 0), -1)
+
+            if gaze_score is not None:
+                return gaze_score, region_of_interest
+            else:
+                return None, None
+        except:
             return None, None
-        
+            
 
 
     
     def EAR_calculation(self,eye_pts, direction):
-        if direction == "left":
-            a = LA.norm(np.array(eye_pts[self.landmarks_for_EAR_calculation['l_l_u_middle']]) - np.array(eye_pts[self.landmarks_for_EAR_calculation['l_l_b_middle']]))
-            b = LA.norm(np.array(eye_pts[self.landmarks_for_EAR_calculation['l_r_u_middle']]) - np.array(eye_pts[self.landmarks_for_EAR_calculation['l_r_b_middle']]))
-            c = 2*LA.norm(np.array(eye_pts[self.landmarks_for_EAR_calculation['l_l_corner']]) - np.array(eye_pts[self.landmarks_for_EAR_calculation['l_r_corner']]))
-    
-        else:
-            a = LA.norm(np.array(eye_pts[self.landmarks_for_EAR_calculation['r_l_u_middle']]) - np.array(eye_pts[self.landmarks_for_EAR_calculation['r_l_b_middle']]))
-            b = LA.norm(np.array(eye_pts[self.landmarks_for_EAR_calculation['r_r_u_middle']]) - np.array(eye_pts[self.landmarks_for_EAR_calculation['r_r_b_middle']]))
-            c = 2*LA.norm(np.array(eye_pts[self.landmarks_for_EAR_calculation['r_l_corner']]) - np.array(eye_pts[self.landmarks_for_EAR_calculation['r_r_corner']]))
+        try:
+            if direction == "left":
+                a = LA.norm(np.array(eye_pts[self.landmarks_for_EAR_calculation['l_l_u_middle']]) - np.array(eye_pts[self.landmarks_for_EAR_calculation['l_l_b_middle']]))
+                b = LA.norm(np.array(eye_pts[self.landmarks_for_EAR_calculation['l_r_u_middle']]) - np.array(eye_pts[self.landmarks_for_EAR_calculation['l_r_b_middle']]))
+                c = 2*LA.norm(np.array(eye_pts[self.landmarks_for_EAR_calculation['l_l_corner']]) - np.array(eye_pts[self.landmarks_for_EAR_calculation['l_r_corner']]))
+        
+            else:
+                a = LA.norm(np.array(eye_pts[self.landmarks_for_EAR_calculation['r_l_u_middle']]) - np.array(eye_pts[self.landmarks_for_EAR_calculation['r_l_b_middle']]))
+                b = LA.norm(np.array(eye_pts[self.landmarks_for_EAR_calculation['r_r_u_middle']]) - np.array(eye_pts[self.landmarks_for_EAR_calculation['r_r_b_middle']]))
+                c = 2*LA.norm(np.array(eye_pts[self.landmarks_for_EAR_calculation['r_l_corner']]) - np.array(eye_pts[self.landmarks_for_EAR_calculation['r_r_corner']]))
+            EAR = (a + b) / c
+        
+            return EAR      
+        except:
+            return None 
         
         
-        EAR = (a + b) / c
-        
-        return EAR
 
     def get_EAR(self):
-        left_EAR = self.EAR_calculation(self.left_eye_imp_coordinates, "left")
-        right_EAR = self.EAR_calculation(self.right_eye_imp_coordinates, "right")
-        avg_EAR = (left_EAR + right_EAR ) / 2
-        return avg_EAR
+        try:
+            left_EAR = self.EAR_calculation(self.left_eye_imp_coordinates, "left")
+            right_EAR = self.EAR_calculation(self.right_eye_imp_coordinates, "right")
+            avg_EAR = (left_EAR + right_EAR ) / 2
+            return avg_EAR
+        except:
+            return None
     
     def gaze_another_method(self,grayscale_region_of_interest):
         
