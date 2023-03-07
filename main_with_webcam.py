@@ -42,7 +42,7 @@ dist_coeffs = np.array(
 # instantiaiont
 eye_detector = EyeDetector(showProcessing= False)
 # score_evaluation = Score_Evaluation(capture_fps = 11, EAR_THRESHOLD= 0.15, EAR_TIME_THRESHOLD=2, GAZE_THRESHOLD=0.2, GAZE_TIME_THRESHOLD= 2, PITCH_THRESHOLD=35, YAW_THRESHOLD=28, POSE_TIME_THRESHOLD= 2.5)
-score_evaluation = Score_Evaluation(11, ear_tresh=0.18, ear_time_tresh=3.0, gaze_tresh=0.2,
+score_evaluation = Score_Evaluation(11, ear_tresh=0.2, ear_time_tresh=4.0, gaze_tresh=0.2,
                        gaze_time_tresh=2, pitch_tresh=35, yaw_tresh=28, pose_time_tresh=2.5, verbose=False)
 
 yawn_detection = YawnDetection()
@@ -67,7 +67,8 @@ frame_counter = 0
 mpFaceMesh = mp.solutions.face_mesh
 faceMesh = mpFaceMesh.FaceMesh(max_num_faces = 1)
 avg_gaze_score = None
-
+yawn_counter = 0
+asleep_counter = 0
 
 while(cap.isOpened()):
     yawning = False
@@ -137,12 +138,16 @@ while(cap.isOpened()):
 
         yawn_detection.get_imp_coordinates(multi_face_landmarks,img, width, height)
         lips_distance = yawn_detection.get_distance()
-        if lips_distance and  lips_distance > 25:
+        if lips_distance and lips_distance > 25:
             yawning = True
-            if pygame.mixer.get_busy() == 0:
+            yawn_counter += 1
+            if yawn_counter > 30:
+                yawn_counter = 0
+            # print(" The yawn counter is ", yawn_counter)
+            if pygame.mixer.get_busy() == 0 and yawn_counter == 30:
                 yawning_music.play()
         
-        # gaze_score = (left_gaze + right_gaze) / 2
+        # gaze_score = (left_gaze + right_gaze) /2 
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
@@ -158,11 +163,13 @@ while(cap.isOpened()):
 
         if yawning:
             cv2.putText(img, "Yawning", (80,300), cv2.FONT_HERSHEY_PLAIN, 1, (0,0,255),1,cv2.LINE_AA)
+        else:
+            yawning_counter = 0
         if tired:
-            cv2.putText(img, "TIRED!", (10, 280),
+            cv2.putText(img, "Tired!", (10, 280),
                         cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 255), 1, cv2.LINE_AA)
         else:
-            cv2.putText(img, "FRESH!", (10, 280),
+            cv2.putText(img, "Fresh!", (10, 280),
                         cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 255), 1, cv2.LINE_AA)
 
 
@@ -180,21 +187,30 @@ while(cap.isOpened()):
                         cv2.FONT_HERSHEY_PLAIN, 5, (0, 0, 255), 2, cv2.LINE_AA)
             # if the state of attention of the driver is not normal, show an alert on screen
         if asleep:
-            cv2.putText(img, "ASLEEP!", (10, 400),
+            asleep_counter += 1
+            if asleep_counter > 20:
+                asleep_counter = 0
+            # print("Asleep counter is ", asleep_counter)
+            cv2.putText(img, "Asleep", (10, 400),
                         cv2.FONT_HERSHEY_PLAIN, 5, (0, 0, 255), 2, cv2.LINE_AA)
-            if pygame.mixer.get_busy() == 0:
+            if pygame.mixer.get_busy() == 0 and asleep_counter == 20:
                 asleep_music.play()
+        else:
+            asleep_counter = 0
+
         if looking_away:
-            cv2.putText(img, "Pupil Not In Center!", (10, 350),
+            cv2.putText(img, "Pupil Not In Center", (10, 350),
                         cv2.FONT_HERSHEY_PLAIN, 2, (0, 0, 255), 2, cv2.LINE_AA)
         if distracted:
-            cv2.putText(img, "DISTRACTED!", (10, 400),
+            cv2.putText(img, "Distracted", (10, 400),
                         cv2.FONT_HERSHEY_PLAIN, 5, (0, 0, 255), 2, cv2.LINE_AA)
             
 
         out.write(img)
-            
+        
+        
         cv2.imshow("Resized_Window", img)
+
     else:
         
         # print("The frame counter is ", frame_counter)

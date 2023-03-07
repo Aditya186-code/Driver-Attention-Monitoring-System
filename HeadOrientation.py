@@ -149,18 +149,18 @@ class HeadOrientation:
                 # Add the text on the image
                 # cv2.putText(frame, text, (20, 1500), cv2.FONT_HERSHEY_SIMPLEX, 8, (0, 0, 255), 5)
                 cv2.putText(frame, text, (20,100), cv2.FONT_HERSHEY_SIMPLEX, 2, (0,0,255), 2)
-                if text == "Looking-Up":
-                    if pygame.mixer.get_busy() == 0:
-                        self.looking_up.play()
-                elif text == "Looking-Down":
-                    if pygame.mixer.get_busy() == 0:
-                        self.looking_down.play()
-                elif text == "Looking-Right":
-                    if pygame.mixer.get_busy() == 0:
-                        self.looking_right.play()
-                elif text == "Looking-Left":
-                    if pygame.mixer.get_busy() == 0:
-                        self.looking_left.play()
+                # if text == "Looking-Up":
+                #     if pygame.mixer.get_busy() == 0:
+                #         self.looking_up.play()
+                # elif text == "Looking-Down":
+                #     if pygame.mixer.get_busy() == 0:
+                #         self.looking_down.play()
+                # elif text == "Looking-Right":
+                #     if pygame.mixer.get_busy() == 0:
+                #         self.looking_right.play()
+                # elif text == "Looking-Left":
+                #     if pygame.mixer.get_busy() == 0:
+                #         self.looking_left.play()
 
                 return self.frame, x, y, z
         else:

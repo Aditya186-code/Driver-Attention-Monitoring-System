@@ -107,6 +107,8 @@ class Score_Evaluation:
         left = False
         if self.ear_counter >= self.ear_act_tresh:  # check if the ear cumulative counter surpassed the threshold
             asleep = True
+            
+            
 
         if self.gaze_counter >= self.gaze_act_tresh:  # check if the gaze cumulative counter surpassed the threshold
             looking_away = True
