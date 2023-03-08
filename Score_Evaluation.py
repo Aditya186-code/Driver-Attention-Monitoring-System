@@ -3,7 +3,7 @@ import time
 
 class Score_Evaluation:
 
-    def __init__(self, capture_fps: int, ear_tresh, gaze_tresh, perclos_tresh=0.2, ear_time_tresh=3.0, pitch_tresh=35,
+    def __init__(self, capture_fps: int, ear_tresh, gaze_tresh, perclos_tresh=0.3, ear_time_tresh=3.0, pitch_tresh=35,
                  yaw_tresh=30, gaze_time_tresh=4.0, roll_tresh=None, pose_time_tresh=4.0, verbose=False):
         """
         Attention Scorer class that contains methods for estimating EAR,Gaze_Score,PERCLOS and Head Pose over time,
@@ -208,7 +208,7 @@ class Score_Evaluation:
 
         delta = time.time() - self.prev_time  # set delta timer
         tired = False  # set default value for the tired state of the driver
-
+        # self.eye_closure_counter = 0
         # if the ear_score is lower or equal than the threshold, increase the eye_closure_counter
         if (ear_score is not None) and (ear_score <= self.ear_tresh):
             self.eye_closure_counter += 1
@@ -221,9 +221,9 @@ class Score_Evaluation:
         if perclos_score >= self.perclos_tresh:  # if the PERCLOS score is higher than a threshold, tired = True
             tired = True
 
-        if self.verbose:
-            print(
-                f"Closure Time:{closure_time}/{self.perclos_time_period}\nPERCLOS: {round(perclos_score, 3)}")
+        # if self.verbose:
+        #     print(
+        #         f"Closure Time:{closure_time}/{self.perclos_time_period}\nPERCLOS: {round(perclos_score, 3)}")
 
         if delta >= self.perclos_time_period:  # at every end of the given time period, reset the counter and the timer
             self.eye_closure_counter = 0

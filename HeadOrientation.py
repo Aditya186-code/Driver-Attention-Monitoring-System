@@ -148,7 +148,10 @@ class HeadOrientation:
 
                 # Add the text on the image
                 # cv2.putText(frame, text, (20, 1500), cv2.FONT_HERSHEY_SIMPLEX, 8, (0, 0, 255), 5)
-                cv2.putText(frame, text, (20,100), cv2.FONT_HERSHEY_SIMPLEX, 2, (0,0,255), 2)
+                cv2.putText(frame, text, (10,100), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 2)
+                cv2.putText(frame, f"x : {round(x,2)}", (10,150), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 2)
+                cv2.putText(frame, f"y : {round(y, 2)}", (10,190), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 2)
+                cv2.putText(frame, f"z : {round(z,2)}", (10,230), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 2)
                 # if text == "Looking-Up":
                 #     if pygame.mixer.get_busy() == 0:
                 #         self.looking_up.play()

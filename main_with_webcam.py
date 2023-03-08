@@ -155,22 +155,23 @@ while(cap.isOpened()):
         
         if EAR is not None:
             cv2.putText(img, "EAR:" + str(round(EAR, 3)), (10, 50),
-                                cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 255), 1, cv2.LINE_AA)
+                                cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 255), 2, cv2.LINE_AA)
 
         # if avg_gaze_score is not None:
         #     cv2.putText(img, "Gaze Score:" + str(round(avg_gaze_score, 3)), (10, 80),
         #                         cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 255), 1, cv2.LINE_AA)
 
         if yawning:
-            cv2.putText(img, "Yawning", (80,300), cv2.FONT_HERSHEY_PLAIN, 1, (0,0,255),1,cv2.LINE_AA)
+            cv2.putText(img, f"Yawning : {yawning}", (10,300), cv2.FONT_HERSHEY_PLAIN, 2, (255,255,255),2,cv2.LINE_AA)
         else:
+            cv2.putText(img, f"Yawning : {yawning}", (10,300), cv2.FONT_HERSHEY_PLAIN, 2, (255,255,255),2,cv2.LINE_AA)
             yawning_counter = 0
         if tired:
-            cv2.putText(img, "Tired!", (10, 280),
-                        cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 255), 1, cv2.LINE_AA)
+            cv2.putText(img, "Tired!", (10, 260),
+                        cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 255), 2, cv2.LINE_AA)
         else:
-            cv2.putText(img, "Fresh!", (10, 280),
-                        cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 255), 1, cv2.LINE_AA)
+            cv2.putText(img, "Fresh!", (10, 260),
+                        cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 255), 2, cv2.LINE_AA)
 
 
         asleep, looking_away, distracted, right, center, left = score_evaluation.score_evaluate(
@@ -192,18 +193,24 @@ while(cap.isOpened()):
                 asleep_counter = 0
             # print("Asleep counter is ", asleep_counter)
             cv2.putText(img, "Asleep", (10, 400),
-                        cv2.FONT_HERSHEY_PLAIN, 5, (0, 0, 255), 2, cv2.LINE_AA)
+                        cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 255), 2, cv2.LINE_AA)
             if pygame.mixer.get_busy() == 0 and asleep_counter == 20:
                 asleep_music.play()
         else:
+            cv2.putText(img, "Awake", (10, 400),
+                        cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 255), 2, cv2.LINE_AA)
             asleep_counter = 0
 
         if looking_away:
             cv2.putText(img, "Pupil Not In Center", (10, 350),
-                        cv2.FONT_HERSHEY_PLAIN, 2, (0, 0, 255), 2, cv2.LINE_AA)
-        if distracted:
-            cv2.putText(img, "Distracted", (10, 400),
-                        cv2.FONT_HERSHEY_PLAIN, 5, (0, 0, 255), 2, cv2.LINE_AA)
+                        cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 255), 2, cv2.LINE_AA)
+        # if distracted:
+        #     cv2.putText(img, "Distracted", (10, 400),
+        #                 cv2.FONT_HERSHEY_PLAIN, 5, (0, 0, 255), 2, cv2.LINE_AA)
+        # if perclos_score is not None:
+            
+        #     cv2.putText(img, f"PERCLOS : {round(perclos_score,2)}", (10, 450),
+        #                 cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 255), 2, cv2.LINE_AA)
             
 
         out.write(img)
