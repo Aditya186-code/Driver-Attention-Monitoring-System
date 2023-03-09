@@ -7,6 +7,7 @@ from HeadOrientation import HeadOrientation
 from YawnDetection import YawnDetection
 import pygame
 from pygame import mixer
+import time
 
 mixer.init()
 
@@ -60,9 +61,13 @@ img_hieght, img_width = camera.shape[:2]
 fourcc = cv2.VideoWriter_fourcc(*'XVID')
 out = cv2.VideoWriter('output21.mp4', fourcc, 30.0, (img_width, img_hieght))
 
+
+
 window_width = 800
 
 frame_counter = 0
+current_time = 0
+previous_time = 0
 
 mpFaceMesh = mp.solutions.face_mesh
 faceMesh = mpFaceMesh.FaceMesh(max_num_faces = 1)
@@ -162,15 +167,15 @@ while(cap.isOpened()):
         #                         cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 255), 1, cv2.LINE_AA)
 
         if yawning:
-            cv2.putText(img, f"Yawning : {yawning}", (10,300), cv2.FONT_HERSHEY_PLAIN, 2, (255,255,255),2,cv2.LINE_AA)
+            cv2.putText(img, f"Yawning : {yawning}", (10,310), cv2.FONT_HERSHEY_PLAIN, 2, (255,255,255),2,cv2.LINE_AA)
         else:
-            cv2.putText(img, f"Yawning : {yawning}", (10,300), cv2.FONT_HERSHEY_PLAIN, 2, (255,255,255),2,cv2.LINE_AA)
+            cv2.putText(img, f"Yawning : {yawning}", (10,310), cv2.FONT_HERSHEY_PLAIN, 2, (255,255,255),2,cv2.LINE_AA)
             yawning_counter = 0
         if tired:
-            cv2.putText(img, "Tired!", (10, 260),
+            cv2.putText(img, "Tired!", (10, 270),
                         cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 255), 2, cv2.LINE_AA)
         else:
-            cv2.putText(img, "Fresh!", (10, 260),
+            cv2.putText(img, "Fresh!", (10, 270),
                         cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 255), 2, cv2.LINE_AA)
 
 
@@ -192,17 +197,17 @@ while(cap.isOpened()):
             if asleep_counter > 20:
                 asleep_counter = 0
             # print("Asleep counter is ", asleep_counter)
-            cv2.putText(img, "Asleep", (10, 400),
+            cv2.putText(img, "Asleep", (10, 350),
                         cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 255), 2, cv2.LINE_AA)
             if pygame.mixer.get_busy() == 0 and asleep_counter == 20:
                 asleep_music.play()
         else:
-            cv2.putText(img, "Awake", (10, 400),
+            cv2.putText(img, "Awake", (10, 350),
                         cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 255), 2, cv2.LINE_AA)
             asleep_counter = 0
 
         if looking_away:
-            cv2.putText(img, "Pupil Not In Center", (10, 350),
+            cv2.putText(img, "Pupil Not In Center", (10, 400),
                         cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 255), 2, cv2.LINE_AA)
         # if distracted:
         #     cv2.putText(img, "Distracted", (10, 400),
@@ -212,6 +217,19 @@ while(cap.isOpened()):
         #     cv2.putText(img, f"PERCLOS : {round(perclos_score,2)}", (10, 450),
         #                 cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 255), 2, cv2.LINE_AA)
             
+        current_time = time.time()
+        try:
+            fps = 1 / (current_time - previous_time)
+        except:
+            fps = None
+
+
+        previous_time = current_time
+
+        if fps is not None:
+            cv2.putText(img, f"FPS : {int(fps)}", (500, 50),
+                        cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 255), 2, cv2.LINE_AA)
+
 
         out.write(img)
         
