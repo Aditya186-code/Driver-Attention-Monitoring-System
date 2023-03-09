@@ -2,11 +2,12 @@ import cv2
 import numpy as np
 import pygame
 from pygame import mixer
+import time
 
 # from Utils import rotationMatrixToEulerAngles, draw_pose_info
 
 class HeadOrientation:
-    def __init__(self,looking_left, looking_right, looking_up,looking_down,camera_matrix = None, dist_coeffs = None, show_axis : bool = False):
+    def __init__(self,looking_left, looking_right, looking_up,looking_down,forward,mixer,camera_matrix = None, dist_coeffs = None, show_axis : bool = False):
         """
         This class contains methods to calculated the angles(roll, pitch, yaw) of the head. It optionally also uses the camera parameters
         
@@ -20,11 +21,13 @@ class HeadOrientation:
         self.looking_down = looking_down
         self.looking_right = looking_right
         self.looking_left = looking_left
+        self.forward = forward
         self.show_axis = show_axis
         self.camera_matrix = camera_matrix
-        
+        self.sound_counter = 0
         self.dist_coeffs = dist_coeffs
-    
+        self.current_time = 0
+        self.previous_time = 0    
     
     def get_pose(self, frame, landmarks, width, height):
         """
@@ -152,18 +155,25 @@ class HeadOrientation:
                 cv2.putText(frame, f"x : {round(x,2)}", (10,150), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 2)
                 cv2.putText(frame, f"y : {round(y, 2)}", (10,190), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 2)
                 cv2.putText(frame, f"z : {round(z,2)}", (10,230), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 2)
-                # if text == "Looking-Up":
-                #     if pygame.mixer.get_busy() == 0:
-                #         self.looking_up.play()
-                # elif text == "Looking-Down":
-                #     if pygame.mixer.get_busy() == 0:
-                #         self.looking_down.play()
-                # elif text == "Looking-Right":
-                #     if pygame.mixer.get_busy() == 0:
-                #         self.looking_right.play()
-                # elif text == "Looking-Left":
-                #     if pygame.mixer.get_busy() == 0:
-                #         self.looking_left.play()
+
+                self.current_time = time.time()
+                # print("The previous time is ", self.previous_time)
+                # print("The current time is ", self.current_time)
+                if (self.current_time - self.previous_time > 5) or self.previous_time == 0:
+                    if text == "Looking-Up":
+                        if mixer.get_busy() == 0:
+                            self.forward.play()
+                    elif text == "Looking-Down":
+                        if mixer.get_busy() == 0:
+                            self.forward.play()
+                    elif text == "Looking-Right":
+                        if mixer.get_busy() == 0:
+                            self.forward.play()
+                    elif text == "Looking-Left":
+                        if mixer.get_busy() == 0:
+                            self.forward.play()
+
+                    self.previous_time = self.current_time
 
                 return self.frame, x, y, z
         else:

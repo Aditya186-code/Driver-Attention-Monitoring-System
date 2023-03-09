@@ -18,7 +18,12 @@ looking_right = mixer.Sound('Voices/Looking-Right.mp3')
 looking_up = mixer.Sound('Voices/Looking-Up.mp3')
 looking_down = mixer.Sound('Voices/Looking-Down.mp3')
 asleep_music = mixer.Sound('Voices/Asleep.mp3')
+forward = mixer.Sound('Voices/Forward.mp3')
 
+asleep_prev = 0
+asleep_current = 0
+yawn_prev = 0
+yawn_current = 0
 
 def process_face_mediapipe(frame):
 
@@ -49,9 +54,9 @@ score_evaluation = Score_Evaluation(11, ear_tresh=0.2, ear_time_tresh=4.0, gaze_
 yawn_detection = YawnDetection()
 
 if camera_matrix is not None and dist_coeffs is not None:
-    headOrientation = HeadOrientation(looking_left,looking_right,looking_up,looking_down,camera_matrix= camera_matrix,dist_coeffs=dist_coeffs,show_axis=True)
+    headOrientation = HeadOrientation(looking_left,looking_right,looking_up,looking_down,forward,mixer,camera_matrix= camera_matrix,dist_coeffs=dist_coeffs,show_axis=True)
 else:
-    headOrientation = HeadOrientation(looking_left,looking_right,looking_up,looking_down,show_axis= True)
+    headOrientation = HeadOrientation(looking_left,looking_right,looking_up,looking_down,forward,mixer,show_axis= True)
     
 cap = cv2.VideoCapture(0)
 
@@ -145,13 +150,15 @@ while(cap.isOpened()):
         lips_distance = yawn_detection.get_distance()
         if lips_distance and lips_distance > 25:
             yawning = True
+            yawn_current = time.time()
             yawn_counter += 1
             if yawn_counter > 30:
                 yawn_counter = 0
             # print(" The yawn counter is ", yawn_counter)
-            if pygame.mixer.get_busy() == 0 and yawn_counter == 30:
+            # if pygame.mixer.get_busy() == 0 and yawn_counter == 30:
+            if pygame.mixer.get_busy() == 0 and yawn_prev == 0 or yawn_current - yawn_prev > 5:
                 yawning_music.play()
-        
+                yawn_prev = yawn_current
         # gaze_score = (left_gaze + right_gaze) /2 
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -193,14 +200,19 @@ while(cap.isOpened()):
                         cv2.FONT_HERSHEY_PLAIN, 5, (0, 0, 255), 2, cv2.LINE_AA)
             # if the state of attention of the driver is not normal, show an alert on screen
         if asleep:
+
+            asleep_current = time.time()
+            
             asleep_counter += 1
             if asleep_counter > 20:
                 asleep_counter = 0
             # print("Asleep counter is ", asleep_counter)
             cv2.putText(img, "Asleep", (10, 350),
                         cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 255), 2, cv2.LINE_AA)
-            if pygame.mixer.get_busy() == 0 and asleep_counter == 20:
+            # if pygame.mixer.get_busy() == 0 and asleep_counter == 20:
+            if pygame.mixer.get_busy() == 0 and (asleep_prev == 0) or (asleep_current - asleep_prev > 5):
                 asleep_music.play()
+                asleep_prev = asleep_current
         else:
             cv2.putText(img, "Awake", (10, 350),
                         cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 255), 2, cv2.LINE_AA)
