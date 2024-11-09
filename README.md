@@ -22,5 +22,5 @@ EAR.png  Gaze.png  headpose1.png  headpose2.png  landmark.jpg  output1.png  resu
 
 # Outputs
 ![Result 1](images/output1.png)
-![Result 2](images/output2.png)
+![Result 2](images/result2.png)
 
